@@ -5,7 +5,6 @@
 
 package xhttp
 
-
 // HTTP methods
 const (
 	CONNECT  = "CONNECT"
@@ -92,4 +91,10 @@ const (
 	HeaderXFrameOptions           = "X-Frame-Options"
 	HeaderContentSecurityPolicy   = "Content-Security-Policy"
 	HeaderXCSRFToken              = "X-CSRF-Token"
+)
+
+const (
+	TCP  = "tcp"
+	TCP4 = "tcp4"
+	TCP6 = "tcp6"
 )
