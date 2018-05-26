@@ -29,4 +29,21 @@
 
 package main
 
+import (
+	"github.com/ShiChao1996/XHTTP/xhttp"
+)
 
+func main()  {
+	app := xhttp.New()
+	app.Get("/", handle)
+
+	app.ListenAndServe(":3344")
+}
+
+func handle(ctx xhttp.Context) error {
+
+	res:= ctx.Response()
+	res.WriteHeader(200)
+	res.Write([]byte("hello world!"))
+	return nil
+}

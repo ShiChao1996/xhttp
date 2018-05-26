@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
+	"net/url"
 )
 
 var (
@@ -17,6 +18,10 @@ var (
 	errEmptyResponse       = errors.New("empty JSON response body")
 	errNotJSONBody         = errors.New("request body is not JSON")
 	errInvalidRedirectCode = errors.New("invalid redirect status code")
+)
+
+const (
+	defaultMemory = 32 << 20 // 32 MB
 )
 
 type Context interface {
@@ -29,6 +34,10 @@ type Context interface {
 	IsWebSocket() bool
 
 	IP() string
+
+	FormValue(name string) string
+
+	FormParams() (url.Values, error)
 
 	Cookie(name string) (*http.Cookie, error)
 
@@ -82,6 +91,23 @@ func (c *context) IsWebSocket() bool {
 
 func (c *context) IP() string {
 	return c.req.RemoteAddr
+}
+
+func (c *context) FormValue(name string) string {
+	return c.req.FormValue(name)
+}
+
+func (c *context) FormParams() (url.Values, error) {
+	if strings.HasPrefix(c.req.Header.Get(HeaderContentType), MIMEMultipartForm) {
+		if err := c.req.ParseMultipartForm(defaultMemory); err != nil {
+			return nil, err
+		}
+	} else {
+		if err := c.req.ParseForm(); err != nil {
+			return nil, err
+		}
+	}
+	return c.req.Form, nil
 }
 
 func (c *context) Cookie(name string) (*http.Cookie, error) {
