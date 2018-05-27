@@ -31,19 +31,23 @@ package main
 
 import (
 	"github.com/ShiChao1996/XHTTP/xhttp"
+	"github.com/ShiChao1996/XHTTP/xhttp/middleware"
 )
 
-func main()  {
+func main() {
 	app := xhttp.New()
 	app.Get("/", handle)
 
-	app.ListenAndServe(":3344")
+	app.Use(middleware.NegroniLoggerHandler())
+	app.RunTLS(":3344", "./certs/server.crt", "./certs/server.key")
 }
 
 func handle(ctx xhttp.Context) error {
+	//panic("panic test")
 
-	res:= ctx.Response()
+	res := ctx.Response()
+
 	res.WriteHeader(200)
-	res.Write([]byte("hello world!"))
+	res.Write([]byte("hello world! \n"))
 	return nil
 }
